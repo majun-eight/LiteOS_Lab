@@ -166,3 +166,6 @@ CONFIG_DEMO_TYPE   := "oc_tls_mqtt_demo"
 
 #########################STANDARD DEMO END######################################
 include $(TOP_DIR)/iot_link/iot.mk
+
+# extra
+C_DEFS += -DLITEOS

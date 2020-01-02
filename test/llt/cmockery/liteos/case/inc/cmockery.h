@@ -486,16 +486,19 @@ int _run_test(
     const void* const heap_check_point);
 int _run_tests(const UnitTest * const tests, const size_t number_of_tests);
 
-#ifndef LITEOS_NOVA
+#if !defined(LITEOS_NOVA) && !defined(LITEOS)
 // Standard output and error print methods.
 void print_message(const char* const format, ...);
 void print_error(const char* const format, ...);
 void vprint_message(const char* const format, va_list args);
 void vprint_error(const char* const format, va_list args);
-#else
+#elif defined(LITEOS_NOVA)
 #include "kprintf.h"
 #define print_message(format, ...) kprintf(format, ##__VA_ARGS__)
 #define print_error(format, ...) kprintf(format, ##__VA_ARGS__)
+#elif defined(LITEOS)
+#define print_message(format, ...) printf(format, ##__VA_ARGS__)
+#define print_error(format, ...) printf(format, ##__VA_ARGS__)
 #endif
 
 #endif // CMOCKERY_H_

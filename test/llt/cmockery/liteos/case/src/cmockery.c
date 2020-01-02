@@ -222,7 +222,7 @@ static ListNode global_allocated_blocks;
 #ifndef _WIN32
 // Signals caught by exception_handler().
 static const int exception_signals[] = {
-#ifndef LITEOS_NOVA
+#if !defined(LITEOS_NOVA) && !defined(LITEOS)
     SIGFPE,
     SIGILL,
     SIGSEGV,
@@ -1552,7 +1552,7 @@ static LONG WINAPI exception_filter(EXCEPTION_POINTERS *exception_pointers) {
 #endif // !_WIN32
 
 
-#ifndef LITEOS_NOVA
+#if !defined(LITEOS_NOVA) && !defined(LITEOS)
 // Standard output and error print methods.
 void vprint_message(const char* const format, va_list args) {
     char buffer[1024];
