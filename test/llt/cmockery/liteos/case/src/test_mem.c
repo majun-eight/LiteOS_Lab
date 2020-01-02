@@ -42,13 +42,14 @@
 #include "los_memory.h"
 #include "heap.h"
 
+#define TEST_MEM_SIZE   1024
 
 static char *s_mem = NULL;
 
 static void setup (void)
 {
     assert_false (s_mem);
-    assert_true (s_mem = LOS_MemAlloc (m_aucSysMem0, 1024));
+    assert_true (s_mem = LOS_MemAlloc (m_aucSysMem0, TEST_MEM_SIZE));
 }
 
 static void teardown (void)
@@ -62,7 +63,63 @@ static void test_LOS_MemInit (void **state)
     assert_int_equal (LOS_NOK, LOS_MemInit (NULL, 0));
     assert_int_equal (LOS_NOK, LOS_MemInit (s_mem, 0));
 
-    assert_int_equal (LOS_OK, LOS_MemInit (s_mem, 1024));
+    assert_int_equal (LOS_OK, LOS_MemInit (s_mem, TEST_MEM_SIZE));
+}
+
+static void test_LOS_MemDeinit (void **state)
+{
+    printf ("warning: not implemented in os/liteos/base/mem/heap\r\n");
+}
+
+static void test_LOS_MemPoolList (void **state)
+{
+    printf ("warning: not implemented in os/liteos/base/mem/heap\r\n");
+}
+
+static void test_LOS_MemAlloc (void **state)
+{
+    UINT8 *pData = NULL;
+
+    assert_false (pData = (UINT8 *)LOS_MemAlloc(NULL, 10));
+
+    assert_true (pData = (UINT8 *)LOS_MemAlloc(s_mem, 10));
+    assert_int_equal (LOS_OK, LOS_MemFree(s_mem, pData));
+
+    assert_true (pData = (UINT8 *)LOS_MemAlloc(s_mem, 256));
+    assert_int_equal (LOS_OK, LOS_MemFree(s_mem, pData));
+}
+
+static void test_LOS_MemAllocAlign (void **state)
+{
+    UINT8 *pData = NULL;
+
+    assert_true (pData = (UINT8 *)LOS_MemAllocAlign(s_mem, 10, 1)); // automatic change
+    assert_int_equal (LOS_OK, LOS_MemFree(s_mem, pData));
+
+    assert_true (pData = (UINT8 *)LOS_MemAllocAlign(s_mem, 10, 4));
+    assert_int_equal (LOS_OK, LOS_MemFree(s_mem, pData));
+
+    assert_true (pData = (UINT8 *)LOS_MemAllocAlign(s_mem, 10, 8));
+    assert_int_equal (LOS_OK, LOS_MemFree(s_mem, pData));
+}
+
+static void test_LOS_MemRealloc (void **state)
+{
+    UINT8 *pData = NULL;
+
+    assert_true (pData = (UINT8 *)LOS_MemAlloc(s_mem, 10));
+    assert_true (pData = (UINT8 *)LOS_MemRealloc(s_mem, pData, 8)); // cutdown
+    assert_true (pData = (UINT8 *)LOS_MemRealloc(s_mem, pData, 10)); // expand
+    assert_false (pData = (UINT8 *)LOS_MemRealloc(s_mem, pData, 0)); // free
+
+    assert_true (pData = (UINT8 *)LOS_MemAllocAlign(s_mem, 10, 8));
+    assert_true (pData = (UINT8 *)LOS_MemRealloc(s_mem, pData, 168)); // cutdown
+    assert_false (pData = (UINT8 *)LOS_MemRealloc(s_mem, pData, 0)); // free
+
+    assert_true (pData = (UINT8 *)LOS_MemAllocAlign(s_mem, 256, 8));
+    assert_true (pData = (UINT8 *)LOS_MemRealloc(s_mem, pData, 168)); // cutdown
+    assert_false (pData = (UINT8 *)LOS_MemRealloc(s_mem, pData, 0)); // free
+    assert_true (pData = (UINT8 *)LOS_MemRealloc(s_mem, NULL, 20));
 }
 
 /** test entry */
@@ -72,6 +129,11 @@ void test_mem (struct tester_case * caser)
     UnitTest tests [] =
         {
         unit_test (test_LOS_MemInit),
+        unit_test (test_LOS_MemDeinit),
+        unit_test (test_LOS_MemPoolList),
+        unit_test (test_LOS_MemAlloc),
+        unit_test (test_LOS_MemAllocAlign),
+        unit_test (test_LOS_MemRealloc),
         };
 
     caser->stats->totals = sizeof(tests) / sizeof(tests[0]);
