@@ -16,3 +16,5 @@ CFLAGS += $(GCOV_FLAGS)
 
 VALGRIND_FLAGS = --tool=memcheck --leak-check=full --show-reachable=yes --trace-children=yes --smc-check=all \
                  --track-origins=yes
+
+C_INCLUDES += -I $(LLT_DIR)/common/include
