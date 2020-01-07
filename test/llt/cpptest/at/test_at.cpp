@@ -76,7 +76,7 @@ void TEST_at::test_at_command()
 
     (void)at_streammode_set(1);
     ret = at_command("TEST+help", strlen("TEST+help"), "OK", NULL, 0, 1000);
-    TEST_ASSERT (ret == strlen("TEST+help"));
+    TEST_ASSERT (ret >= (int)strlen("TEST+help"));
 
     ret = at_command("TEST+help", strlen("TEST+help"), "ERROR", NULL, 0, 1000);
     TEST_ASSERT (ret == -1);

@@ -32,7 +32,7 @@ void TEST_partition::test_storage_partition_init()
 
     ret = storage_partition_init(test_storage_partition, sizeof(test_storage_partition) / sizeof(storage_partition));
     TEST_ASSERT (ret == 0);
-    
+
     ret = storage_partition_init(test_storage_partition, sizeof(test_storage_partition) / sizeof(storage_partition));
     TEST_ASSERT (ret == -1);
 
@@ -63,7 +63,7 @@ void TEST_partition::test_storage_partition_read()
     TEST_ASSERT (ret == -1);
 
     ret = storage_partition_read(1, buff, 0x50, 0x50);
-    TEST_ASSERT (ret == 0);
+    TEST_ASSERT (ret == -1);
 
     (void)storage_partition_deinit();
 }
@@ -82,7 +82,7 @@ void TEST_partition::test_storage_partition_write()
     TEST_ASSERT (ret == -1);
 
     ret = storage_partition_write(1, buff, 0x50, 0x50);
-    TEST_ASSERT (ret == 0);
+    TEST_ASSERT (ret == -1);
 
     (void)storage_partition_deinit();
 }
@@ -101,7 +101,7 @@ void TEST_partition::test_storage_partition_erase_write()
     TEST_ASSERT (ret == -1);
 
     ret = storage_partition_erase_write(1, buff, 0x50, 0x50);
-    TEST_ASSERT (ret == 0);
+    TEST_ASSERT (ret == -1);
 
     (void)storage_partition_deinit();
 }
@@ -119,7 +119,7 @@ void TEST_partition::test_storage_partition_erase()
     TEST_ASSERT (ret == -1);
 
     ret = storage_partition_erase(1, 0x50, 0x50);
-    TEST_ASSERT (ret == 0);
+    TEST_ASSERT (ret == -1);
 
     (void)storage_partition_deinit();
 }
