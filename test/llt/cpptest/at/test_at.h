@@ -16,6 +16,8 @@ public:
     void test_at_oobregister(void);
     void test_at_command(void);
     void test_at_streammode_set(void);
+    void test_shell_at(void);
+    void test_shell_atdebug(void);
 };
 
 #endif

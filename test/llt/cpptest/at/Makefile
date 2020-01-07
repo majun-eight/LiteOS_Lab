@@ -1,40 +1,20 @@
 CUR_DIR   := $(abspath $(CURDIR))
 TOP_DIR   := $(abspath $(CUR_DIR)/../../../..)
 SDK_DIR   := $(TOP_DIR)
-TEST_DIR  := $(TOP_DIR)/test
-LLT_DIR   := $(TEST_DIR)/llt/cpptest
 
-######################################
-# config
-######################################
-# match files that display the coverage rate
-FILE_PATTERN = "*at*.c"
+all:
+	@$(shell mv $(TOP_DIR)/iot_link/inc/shell.h $(TOP_DIR)/iot_link/inc/shell.h.bak)
+	make -f __Makefile
+	@$(shell mv $(TOP_DIR)/iot_link/inc/shell.h.bak $(TOP_DIR)/iot_link/inc/shell.h)
 
-# common config
-include $(LLT_DIR)/config.mk
+clean:
+	make -f __Makefile clean
 
-# private config
-include $(CUR_DIR)/config.mk
+run:
+	make -f __Makefile run
 
-######################################
-# source
-######################################
-# C++ sources
-CPP_SOURCES += $(wildcard $(CUR_DIR)/*.cpp)
+cov:
+	make -f __Makefile cov
 
-# C sources
-C_SOURCES   += $(wildcard $(CUR_DIR)/*.c)
-
-#######################################
-# CFLAGS
-#######################################
-# C++ includes
-CPP_INCLUDES  += -I $(CUR_DIR)
-
-# C includes
-C_INCLUDES    +=
-
-#######################################
-# build the application
-#######################################
-include $(LLT_DIR)/build.mk
+memcheck:
+	make -f __Makefile memcheck
