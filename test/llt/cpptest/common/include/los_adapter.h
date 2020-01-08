@@ -21,6 +21,10 @@ extern "C"{
 #endif
 #endif /* __cplusplus */
 
+#ifndef SysTick_LOAD_RELOAD_Msk
+#define SysTick_LOAD_RELOAD_Msk     (0xFFFFFFUL /*<< SysTick_LOAD_RELOAD_Pos*/)
+#endif
+
 /* externs */
 extern uint32_t SystemCoreClock;
 extern UINT8   *m_aucSysMem0;
