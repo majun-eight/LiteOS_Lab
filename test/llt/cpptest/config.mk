@@ -18,3 +18,6 @@ VALGRIND_FLAGS = --tool=memcheck --leak-check=full --show-reachable=yes --trace-
                  --track-origins=yes
 
 C_INCLUDES += -I $(LLT_DIR)/common/include
+
+LIB_DIR += -L$(TEST_DIR)/3rd/cpptest/lib
+CPP_INCLUDES += -I$(TEST_DIR)/3rd/cpptest/include

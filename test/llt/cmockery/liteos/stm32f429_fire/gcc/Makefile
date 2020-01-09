@@ -99,6 +99,16 @@ LDSCRIPT = $(PROJECTBASE)/$(LD_FILE)
 # firmware library
 ################################################################################
 
+################################################################################
+# Low-Power (tickless)
+################################################################################
+ifeq ($(LP_MODE), tickless)
+CFLAGS += -DLOSCFG_KERNEL_TICKLESS=1 -DLOSCFG_PLATFORM_HWI=0 -DCONFIG_LP
+else ifeq ($(LP_MODE), tickless_hwi)
+CFLAGS += -DLOSCFG_KERNEL_TICKLESS=1 -DLOSCFG_PLATFORM_HWI=0 -DCONFIG_LP
+else ifeq ($(LP_MODE), runstop)
+CFLAGS += -DLOSCFG_KERNEL_TICKLESS=0 -DLOSCFG_KERNEL_RUNSTOP=1 -DCONFIG_LP
+endif
 
 ################################################################################
 # CFLAGS

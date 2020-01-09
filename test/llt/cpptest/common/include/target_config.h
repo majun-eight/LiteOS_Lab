@@ -40,6 +40,7 @@
 #define _TARGET_CONFIG_H
 
 #include "los_typedef.h"
+#include "los_adapter.h"
 
 
 #ifdef __cplusplus
@@ -76,7 +77,9 @@ extern "C" {
  * @ingroup los_config
  * Configuration liteos kernel tickless
  */
+#ifndef LOSCFG_KERNEL_TICKLESS
 #define LOSCFG_KERNEL_TICKLESS                              NO
+#endif
 
 /*=============================================================================
                                         Hardware interrupt module configuration
@@ -86,7 +89,9 @@ extern "C" {
  * @ingroup los_config
  * Configuration item for hardware interrupt tailoring
  */
+#ifndef LOSCFG_PLATFORM_HWI
 #define LOSCFG_PLATFORM_HWI                                 YES
+#endif
 
 /**
  * @ingroup los_config

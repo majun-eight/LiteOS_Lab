@@ -106,6 +106,11 @@ int main(void)
 
     link_test();
 
+#ifdef CONFIG_LP
+    extern int lp_test(void);
+    lp_test();
+#endif
+
     (void)LOS_Start();
     return 0;
 }
