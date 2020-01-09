@@ -362,8 +362,10 @@ void* __request(coap_al_reqpara_t *reqparam)
 
 	if (litecoap_add_token(msg, g_tok, g_tok_len) < 0)
 	{
-		litecoap_free_option(reqparam->optlst);
-		reqparam->optlst = NULL;
+            /* fix core dump while testing litecoap, optlst has been freed twice
+            litecoap_free_option(reqparam->optlst);
+            reqparam->optlst = NULL;*/
+
 	    litecoap_delete_msg(msg);
 	    msg = NULL;
 	}

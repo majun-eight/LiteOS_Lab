@@ -3,22 +3,18 @@
 
 extern "C"
 {
-#include "coap_core.h"
-#include <malloc.h>
-#include "litecoap.h"
-#include "string.h"
-#include "osal.h"
+    #include "coap_core.h"
+    #include <malloc.h>
+    #include "litecoap.h"
+    #include "string.h"
+    #include "osal.h"
 
     extern int osal_init(void);
-
     extern int litecoap_sal_send(void *handle, char *buf, int size);
     extern int litecoap_sal_read(void *handle, char *buf, int size);
     extern int handle_coap_response(struct _coap_context_t *ctx, coap_msg_t *msg);
-
-    int resHandler(coap_msg_t *rcvmsg, coap_msg_t *outmsg){}
-    int msgHandler(struct _coap_context_t *ctx, coap_msg_t *msg){}
-    //void *osal_malloc(size_t size);
-    //void  osal_free(void *addr);
+    int resHandler(coap_msg_t *rcvmsg, coap_msg_t *outmsg) { return 0; }
+    int msgHandler(struct _coap_context_t *ctx, coap_msg_t *msg) { return 0; }
     extern int litecoap_parse_header(coap_msg_t *msg, const unsigned char *buf, int buflen);
     extern int litecoap_parse_token(coap_msg_t *msg, unsigned char *buf, int buflen);
     extern int litecoap_parse_one_option(coap_msg_t *msg, unsigned short *sumdelta,const unsigned char **buf, int buflen);
@@ -36,7 +32,6 @@ extern "C"
     extern int litecoap_option_check_critical(coap_msg_t *msg);
     extern int litecoap_handle_request(coap_context_t *ctx, coap_msg_t *rcvmsg);
     extern int litecoap_handle_msg(coap_context_t *ctx, coap_msg_t *msg);
-
 }
 
 void TestCoapCore::test_litecoap_parse_header(void)
@@ -76,7 +71,7 @@ void TestCoapCore::test_litecoap_parse_one_option(void)
     unsigned short sumdelta = 0;
     buf = (unsigned char *)litecoap_malloc(20);
     unsigned char *p = buf;
-    //memset(p,0x00,10);
+
     TEST_ASSERT(-1 == litecoap_parse_one_option(msg, NULL, (const unsigned char **)&p, 0));
     p = buf;
     TEST_ASSERT(-2 == litecoap_parse_one_option(msg, &sumdelta, (const unsigned char **)&p, 0));
@@ -112,8 +107,6 @@ void TestCoapCore::test_litecoap_parse_one_option(void)
 void TestCoapCore::test_litecoap_parse_opts_payload(void)
 {
     coap_msg_t *msg = (coap_msg_t *)litecoap_malloc(sizeof(coap_msg_t));
-    //unsigned char *p = NULL;
-    int buflen = 0;
     unsigned char *buf = (unsigned char *)litecoap_malloc(40);
     TEST_ASSERT(-1 == litecoap_parse_opts_payload(msg, buf, 4));
     msg->head.tkl = 6;
@@ -128,7 +121,6 @@ void TestCoapCore::test_litecoap_parse_opts_payload(void)
 
     litecoap_free(buf);
     litecoap_delete_msg(msg);
-
 }
 
 void TestCoapCore::test_litecoap_build_byte_stream(void)
@@ -137,11 +129,9 @@ void TestCoapCore::test_litecoap_build_byte_stream(void)
     coap_context_t *ctx = (coap_context_t *)litecoap_malloc(sizeof(coap_context_t));
     TEST_ASSERT(-1 == litecoap_build_byte_stream(NULL, NULL));
     TEST_ASSERT(-9 == litecoap_build_byte_stream(ctx, msg));
-    //coap_option_t *
 
     ctx->sndbuf.buf = (unsigned char *)litecoap_malloc(1024);
     ctx->sndbuf.len = 10;
-    //TEST_ASSERT(-9 == litecoap_build_byte_stream(ctx, msg));
 
     msg->option =(coap_option_t *)litecoap_malloc(sizeof(coap_option_t));
     msg->option->optlen = 0;
@@ -172,6 +162,7 @@ void TestCoapCore::test_litecoap_build_byte_stream(void)
     msg->option->next = option_2;
     option_2->next = option_3;
     option_3->next = option_4;
+
     //   offset  len1   len2   len3    len4    msg->payloadlen
     //      5      2     18     320      0       10
     TEST_ASSERT(355 == litecoap_build_byte_stream(ctx, msg));
@@ -293,7 +284,6 @@ void TestCoapCore::test_litecoap_new_msg(void)
     litecoap_free(payload);
 }
 
-//int litecoap_send_back(coap_context_t *ctx, coap_msg_t *rcvmsg, unsigned char type)
 void TestCoapCore::test_litecoap_send_back(void)
 {
     coap_msg_t *msg = (coap_msg_t *)litecoap_malloc(sizeof(coap_msg_t));
@@ -408,14 +398,11 @@ void TestCoapCore::test_litecoap_add_resource(void)
     litecoap_free_context(ctx);
 }
 
-//int litecoap_option_check_critical(coap_msg_t *msg)
 void TestCoapCore::test_litecoap_option_check_critical(void)
 {
-
     TEST_ASSERT(0 == litecoap_option_check_critical(NULL));
 }
 
-//int litecoap_handle_request(coap_context_t *ctx, coap_msg_t *rcvmsg)
 void TestCoapCore::test_litecoap_handle_request(void)
 {
     coap_msg_t *msg = (coap_msg_t *)litecoap_malloc(sizeof(coap_msg_t));
@@ -519,7 +506,6 @@ void TestCoapCore::test_litecoap_handle_request(void)
     litecoap_free_context(ctx);
 }
 
-//int litecoap_handle_msg(coap_context_t *ctx, coap_msg_t *msg)
 void TestCoapCore::test_litecoap_handle_msg(void)
 {
     coap_msg_t *msg = (coap_msg_t *)litecoap_malloc(sizeof(coap_msg_t));
@@ -544,7 +530,6 @@ void TestCoapCore::test_litecoap_handle_msg(void)
     litecoap_free_context(ctx);
 }
 
-//int litecoap_read(coap_context_t *ctx)
 void TestCoapCore::test_litecoap_read(void)
 {
     coap_context_t *ctx = (coap_context_t *)litecoap_malloc(sizeof(coap_context_t));
@@ -562,7 +547,6 @@ void TestCoapCore::test_litecoap_read(void)
     litecoap_free_context(ctx);
 }
 
-//int litecoap_send(coap_context_t *ctx, coap_msg_t *msg)
 void TestCoapCore::test_litecoap_send(void)
 {
     coap_context_t *ctx = (coap_context_t *)litecoap_malloc(sizeof(coap_context_t));

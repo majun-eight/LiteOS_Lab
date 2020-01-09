@@ -32,11 +32,12 @@ typedef struct
 static tag_sal_cb   s_sal_cb;
 
 
+/* to fix core dump while testing litecoap 
 __attribute__((weak))  int link_tcpip_imp_init(void)
 {
     printf("%s:###please implement this function by yourself####\n\r",__FUNCTION__);
     return -1;
-}
+}*/
 
 
 
