@@ -2,6 +2,8 @@
 #include "mbedtls/md.h"
 #include "stdint.h"
 #include "ota_flag.h"
+#include <string.h>
+#include <osal.h>
 
 struct input_stream {
   int start;
@@ -37,14 +39,14 @@ static int ota_pack_calc_stream_init(int sign_len, int file_size)
   calc_stream.start = sign_len;
   calc_stream.end = file_size;
 
-  hash_cache = osal_malloc(HASH_LEN);
+  hash_cache = (uint8_t *)osal_malloc(HASH_LEN);
   if (hash_cache == NULL)
     return -1;
 
 
-  sign_cache = osal_malloc(sign_len);
+  sign_cache = (uint8_t *)osal_malloc(sign_len);
   if (sign_cache == NULL) {
-    osal_free(hash_cache);
+    osal_free((uint8_t *)hash_cache);
     return -1;
   }
 
@@ -71,10 +73,16 @@ static inline void ota_pack_calc_stream_deinit()
 static int ota_pack_read_stream(uint8_t *buf, int32_t buf_len)
 {
   int read_len = 0;
+
   if (calc_stream.end - calc_stream.start > buf_len) {
     read_len = buf_len;
   } else {
     read_len = calc_stream.end - calc_stream.start;
+  }
+
+  /* fix core dump, add < 0 case prcoess */
+  if (read_len < 0) {
+    return read_len;
   }
 
   ota_storage_bin_read(calc_stream.start, buf, read_len);
