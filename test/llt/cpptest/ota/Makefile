@@ -22,7 +22,8 @@ include $(CUR_DIR)/config.mk
 # C++ sources
 CPP_SOURCES += \
 		$(wildcard $(CUR_DIR)/*.cpp) \
-		$(wildcard $(CUR_DIR)/pcp/*.cpp)
+		$(wildcard $(CUR_DIR)/pcp/*.cpp) \
+		$(wildcard $(CUR_DIR)/manager/*.cpp)
 
 # C sources
 C_SOURCES   += $(wildcard $(CUR_DIR)/*.c)
@@ -33,7 +34,8 @@ C_SOURCES   += $(wildcard $(CUR_DIR)/*.c)
 # C++ includes
 CPP_INCLUDES  += \
 		-I $(CUR_DIR) \
-		-I $(CUR_DIR)/pcp
+		-I $(CUR_DIR)/pcp \
+		-I $(CUR_DIR)/manager
 
 # C includes
 C_INCLUDES    +=
