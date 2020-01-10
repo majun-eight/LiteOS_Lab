@@ -8,7 +8,7 @@ LLT_DIR   := $(TEST_DIR)/llt/cpptest
 # config
 ######################################
 # match files that display the coverage rate
-FILE_PATTERN = "*coap_core.c"
+FILE_PATTERN = "*coap_core.c" "*coap_osdepends.c" "*litecoap_port.c" "*coap_al.c"
 
 # common config
 include $(LLT_DIR)/config.mk
@@ -21,9 +21,11 @@ include $(CUR_DIR)/config.mk
 ######################################
 # C++ sources
 CPP_SOURCES += $(wildcard $(CUR_DIR)/*.cpp)
+CPP_OBJ = $(addprefix $(BUILD_DIR)/, $(notdir $(patsubst %.cpp, %.o, $(CPP_SOURCES))))
 
 # C sources
 C_SOURCES   += $(wildcard $(CUR_DIR)/*.c)
+C_OBJ:=$(addprefix $(BUILD_DIR)/, $(notdir $(patsubst %.c, %.o, $(C_SOURCES))))
 
 #######################################
 # CFLAGS
