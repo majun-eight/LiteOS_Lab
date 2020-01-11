@@ -14,6 +14,7 @@ public:
     TestPcp();
     ~TestPcp();
     void test_ota_pcp_init(void);
+    void test_pcp_msg_push(void);
 
 
 };

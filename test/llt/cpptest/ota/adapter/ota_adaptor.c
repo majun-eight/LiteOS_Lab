@@ -37,6 +37,8 @@
 #include "common.h"
 #include "hal_flash.h"
 
+#include <string.h>
+
 extern char mem_flash[FLASH_SECTOR_ILEGAL];
 
 
@@ -114,4 +116,3 @@ void hal_init_ota(void)
   flash_adaptor_init();
   ota_storage_install(&prv_ota_flag_s);
 }
-

@@ -26,7 +26,9 @@ CPP_SOURCES += \
 		$(wildcard $(CUR_DIR)/manager/*.cpp)
 
 # C sources
-C_SOURCES   += $(wildcard $(CUR_DIR)/*.c)
+C_SOURCES   += \
+		$(wildcard $(CUR_DIR)/*.c) \
+		$(wildcard $(CUR_DIR)/adapter/*.c)
 
 #######################################
 # CFLAGS
@@ -38,7 +40,8 @@ CPP_INCLUDES  += \
 		-I $(CUR_DIR)/manager
 
 # C includes
-C_INCLUDES    +=
+C_INCLUDES    += \
+		-I $(CUR_DIR)/adapter
 
 #######################################
 # build the application
