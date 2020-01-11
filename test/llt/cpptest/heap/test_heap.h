@@ -22,6 +22,7 @@ public:
     void test_LOS_MemRealloc(void);
     void test_LOS_MemFree(void);
     void test_LOS_MemStatisticsGet(void);
+    void test_heap(void);
 
 protected:
     void setup();

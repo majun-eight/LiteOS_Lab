@@ -15,6 +15,8 @@
 
 extern "C"
 {
+    typedef struct heap heap_t;
+
 #if (LOSCFG_MEM_STATISTICS == YES)
     typedef struct mem_stat
     {
@@ -30,10 +32,12 @@ extern "C"
         unsigned long long cum_size_freed;
     } mem_stat_t;
 
-    typedef struct heap heap_t;
-
     extern int    heap_stat_get    (heap_t * heap, mem_stat_t * stat);
 #endif //LOSCFG_MEM_STATISTICS == YES
+
+    extern int heap_init (heap_t * heap);
+    extern int heap_add (heap_t * heap, char * buff, size_t size);
+    extern int heap_free (heap_t * heap, char * mem);
 }
 
 /* defines */
@@ -58,6 +62,7 @@ TestLosHeap::TestLosHeap()
     TEST_ADD(TestLosHeap::test_LOS_MemRealloc);
     TEST_ADD(TestLosHeap::test_LOS_MemFree);
     TEST_ADD(TestLosHeap::test_LOS_MemStatisticsGet);
+    TEST_ADD(TestLosHeap::test_heap);
 }
 
 TestLosHeap::~TestLosHeap()
@@ -109,6 +114,9 @@ void TestLosHeap::test_LOS_MemAllocAlign(void)
     UINT32 uwRet;
     UINT8 *pData = NULL;
 
+    pData = (UINT8 *)LOS_MemAllocAlign(NULL, 10, 1);
+    TEST_ASSERT(pData == NULL);
+
     pData = (UINT8 *)LOS_MemAllocAlign(m_aucSysMem0, 10, 1);
     TEST_ASSERT(pData != NULL);
     uwRet = LOS_MemFree(m_aucSysMem0, pData);
@@ -131,11 +139,46 @@ void TestLosHeap::test_LOS_MemAllocAlign(void)
     TEST_ASSERT(pData != NULL);
     uwRet = LOS_MemFree(m_aucSysMem0, pData);
     TEST_ASSERT(uwRet == LOS_OK);
+
+    pData = (UINT8 *)LOS_MemAllocAlign(m_aucSysMem0, 10, 12);
+    TEST_ASSERT(pData == NULL);
+
+
+    UINT8 *ptr[32] = {NULL};
+    int i, j;
+    UINT32 size = 1201;
+
+    j = 0;
+    for (i = 0; i < 32; ++i)
+    {
+        if ((ptr[i] = (UINT8 *)LOS_MemAllocAlign(m_aucSysMem0, size, 8)) != NULL)
+        {
+            j++;
+            size += (UINT8)rand();
+        }
+        else
+        {
+            size -= (UINT8)rand();
+        }
+    }
+    printf("j: %d\n", j);
+    for (i = 0; i < 32; ++i)
+    {
+        if (ptr[i] != NULL)
+        {
+            TEST_ASSERT_EQUALS(LOS_OK, LOS_MemFree(m_aucSysMem0, ptr[i]));
+            ptr[i] = NULL;
+        }
+    }
 }
 
 void TestLosHeap::test_LOS_MemRealloc(void)
 {
     UINT8 *pData = NULL;
+
+    pData = (UINT8 *)LOS_MemRealloc(NULL, NULL, 1);
+    TEST_ASSERT(pData == NULL);
+
     pData = (UINT8 *)LOS_MemAlloc(m_aucSysMem0, 10);
     TEST_ASSERT(pData != NULL);
     pData = (UINT8 *)LOS_MemRealloc(m_aucSysMem0, pData, 8); // cutdown
@@ -199,4 +242,12 @@ void TestLosHeap::test_LOS_MemStatisticsGet(void)
     LOS_MemInfo(m_aucSysMem0, false);
     printf("\ndump heap: show chunck:\n");
     LOS_MemInfo(m_aucSysMem0, true);
+}
+
+void TestLosHeap::test_heap(void)
+{
+    TEST_ASSERT_EQUALS(-1, heap_init(NULL));
+    TEST_ASSERT_EQUALS(-1, heap_add(NULL, NULL, 0));
+    TEST_ASSERT_EQUALS(-1, heap_free(NULL, NULL));
+    TEST_ASSERT_EQUALS(-1, heap_free((heap_t *)m_aucSysMem0, NULL));
 }
