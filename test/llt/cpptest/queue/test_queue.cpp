@@ -33,6 +33,7 @@
  *---------------------------------------------------------------------------*/
 
 #include "test_queue.h"
+#include "cpp_stub.h"
 
 #include <cstring>
 
@@ -52,6 +53,22 @@ extern "C"
                       void *args,int stack_size,void *stack,int prior);
 
 
+    /* stubs */
+
+    static void *osal_malloc_stub(size_t size)
+    {
+        return NULL;
+    }
+
+    static bool_t osal_semp_create_stub(osal_semp_t *semp,int limit,int initvalue)
+    {
+        return false;
+    }
+
+    static bool_t osal_mutex_create_stub(osal_mutex_t *mutex)
+    {
+        return false;
+    }
 }
 
 TestQueue::TestQueue()
@@ -63,6 +80,7 @@ TestQueue::TestQueue()
     TEST_ADD(TestQueue::test_queue_pop);
     TEST_ADD(TestQueue::test_queue_delete);
     TEST_ADD(TestQueue::test_queue_demo);
+    TEST_ADD(TestQueue::test_queue_stub);
 
 }
 
@@ -186,4 +204,33 @@ void TestQueue::test_queue_demo(void)
     queue_delete(q);
 }
 
+void TestQueue::test_queue_stub(void)
+{
+    queue_t *q;
 
+    // osal_malloc failed
+    Stub sb;
+    sb.set(osal_malloc, osal_malloc_stub);
+
+    q = queue_create("test", 10, 1);
+    TEST_ASSERT(NULL == q);
+
+    sb.reset(osal_malloc);
+
+    q = queue_create("test", 10, 1); // check stub restore
+    TEST_ASSERT(NULL != q);
+
+    queue_delete(q);
+
+    // osal_semp_create failed
+    sb.set(osal_semp_create, osal_semp_create_stub);
+    q = queue_create("test", 10, 1);
+    TEST_ASSERT(NULL == q);
+    sb.reset(osal_semp_create);
+
+    // osal_mutex_create failed
+    sb.set(osal_mutex_create, osal_mutex_create_stub);
+    q = queue_create("test", 10, 1);
+    TEST_ASSERT(NULL == q);
+    sb.reset(osal_mutex_create);
+}

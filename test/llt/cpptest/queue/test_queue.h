@@ -19,10 +19,9 @@ public:
     void test_queue_pop(void);
     void test_queue_delete(void);
     void test_queue_demo(void);
-
+    void test_queue_stub(void);
 };
 
 
 
 #endif /* __TEST_QUEUE_H__ */
-
