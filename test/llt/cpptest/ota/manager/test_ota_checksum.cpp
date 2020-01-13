@@ -33,6 +33,7 @@
  *---------------------------------------------------------------------------*/
 
 #include "test_ota_checksum.h"
+#include "cpp_stub.h"
 
 #include <cstring>
 
@@ -45,6 +46,7 @@ extern "C"
     #include "string.h"
     #include "hal_flash.h"
     #include "osal.h"
+    #include "mbedtls/md.h"
 
     extern char mem_flash[FLASH_SECTOR_ILEGAL];
     extern void hal_init_ota(void);
@@ -54,6 +56,21 @@ extern "C"
     extern int ota_pack_calc_hash(uint8_t *hash_out);
     extern int ota_pack_get_signature_verify_result(int sign_len, int file_len);
 
+    /* stubs */
+    static const mbedtls_md_info_t *mbedtls_md_info_from_type_stub( mbedtls_md_type_t md_type )
+    {
+        return NULL;
+    }
+
+    static int mbedtls_md_setup_stub( mbedtls_md_context_t *ctx, const mbedtls_md_info_t *md_info, int hmac )
+    {
+        return -1;
+    }
+
+    static int mbedtls_md_starts_stub( mbedtls_md_context_t *ctx )
+    {
+        return -1;
+    }
 }
 
 TestOtaChecksum::TestOtaChecksum()
@@ -62,6 +79,7 @@ TestOtaChecksum::TestOtaChecksum()
     hal_init_ota();
     TEST_ADD(TestOtaChecksum::test_ota_pack_calc_hash);
     TEST_ADD(TestOtaChecksum::test_ota_pack_get_signature_verify_result);
+    TEST_ADD(TestOtaChecksum::test_ota_checksum_stub);
 }
 
 TestOtaChecksum::~TestOtaChecksum()
@@ -87,5 +105,34 @@ void TestOtaChecksum::test_ota_pack_get_signature_verify_result(void)
     TEST_ASSERT(0 != ota_pack_get_signature_verify_result(256, 10));
     TEST_ASSERT(0 != ota_pack_get_signature_verify_result(256, 512));
     TEST_ASSERT(0 != ota_pack_get_signature_verify_result(256, 2048));
+}
+
+void TestOtaChecksum::test_ota_checksum_stub(void)
+{
+    uint8_t *hash_cache = (uint8_t *)osal_malloc(HASH_LEN_32);
+    TEST_ASSERT(NULL != hash_cache);
+    memset(hash_cache, 0, HASH_LEN_32);
+
+    // osal_malloc failed
+    Stub sb;
+    sb.set(mbedtls_md_info_from_type, mbedtls_md_info_from_type_stub);
+
+    TEST_ASSERT(0 != ota_pack_calc_hash(hash_cache));
+
+    sb.reset(mbedtls_md_info_from_type);
+
+    sb.set(mbedtls_md_setup, mbedtls_md_setup_stub);
+
+    TEST_ASSERT(0 != ota_pack_calc_hash(hash_cache));
+
+    sb.reset(mbedtls_md_setup);
+
+    sb.set(mbedtls_md_starts, mbedtls_md_starts_stub);
+
+    TEST_ASSERT(0 != ota_pack_calc_hash(hash_cache));
+
+    sb.reset(mbedtls_md_starts);
+
+    osal_free((uint8_t *)hash_cache);
 }
 

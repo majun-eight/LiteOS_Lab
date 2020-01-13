@@ -1,6 +1,5 @@
 #include "test_litecoap_port.h"
 
-
 extern "C"
 {
     #include "coap_core.h"
@@ -72,6 +71,7 @@ void TestLiteCoapPort::test_handle_coap_response(void)
     msg.tok->tklen = tklen;
     msg.head.tkl = 8;
 
+    TEST_ASSERT(0 == handle_coap_response(&ctx, &msg));
     TEST_ASSERT(0 == handle_coap_response(&ctx, &msg));
 
     // condition 2
