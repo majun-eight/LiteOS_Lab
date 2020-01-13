@@ -249,5 +249,5 @@ void TestLosHeap::test_heap(void)
     TEST_ASSERT_EQUALS(-1, heap_init(NULL));
     TEST_ASSERT_EQUALS(-1, heap_add(NULL, NULL, 0));
     TEST_ASSERT_EQUALS(-1, heap_free(NULL, NULL));
-    TEST_ASSERT_EQUALS(-1, heap_free((heap_t *)m_aucSysMem0, NULL));
+    TEST_ASSERT_EQUALS(0, heap_free((heap_t *)m_aucSysMem0, NULL));
 }

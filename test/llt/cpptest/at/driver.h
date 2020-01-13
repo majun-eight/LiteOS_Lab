@@ -1,19 +1,24 @@
 #include <stdio.h>
+#include <unistd.h>
+#include <string.h>
 
 typedef void* los_dev_t;
-static int sync = 0;
+static int sync_cnt = 0;
+
+static char dev[1];
 
 los_dev_t  los_dev_open  (const char *name,unsigned int flag)
 {
     printf("I`m open\n");
+    return dev;
 }
 
 ssize_t    los_dev_read  (los_dev_t dev,size_t offset,void *buf,size_t len,uint32_t timeout)
 {
-    while (sync <= 0) {
+    while (sync_cnt <= 0) {
 	    usleep(50);
     }
-	sync--;
+	sync_cnt--;
 
     printf("I`m read\n");
     const char *atString = "TEST+help";
@@ -26,7 +31,7 @@ ssize_t    los_dev_write (los_dev_t dev,size_t offset,const void *buf,size_t len
     printf("I`m write\n");
 
     if (!strncmp(buf, "TEST+help", strlen("TEST+help"))) {
-        sync++;
+        sync_cnt++;
 	}
 
     return 1;

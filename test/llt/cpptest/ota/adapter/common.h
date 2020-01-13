@@ -46,9 +46,7 @@
 #define ERR -1
 
 #define HAL_OTA_LOG(fmt, ...) \
-(void)printf("[%s:%d][%lu]" fmt "\r\n",  __FUNCTION__, __LINE__, (uint32_t) osal_sys_time(),  ##__VA_ARGS__)
+(void)printf("[%s:%d][%llu]" fmt "\r\n",  __FUNCTION__, __LINE__, (uint64_t) osal_sys_time(),  ##__VA_ARGS__)
 
 
 #endif //COMMON_H
-
-

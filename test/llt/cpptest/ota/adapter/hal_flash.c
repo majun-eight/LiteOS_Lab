@@ -106,7 +106,7 @@ typedef struct __sector_map {
 
 
 sector_map_t sector_map[24] = {
-    {ADDR_FLASH_SECTOR_0, 16},  {ADDR_FLASH_SECTOR_1, 16}, 
+    {ADDR_FLASH_SECTOR_0, 16},  {ADDR_FLASH_SECTOR_1, 16},
     {ADDR_FLASH_SECTOR_2, 16},  {ADDR_FLASH_SECTOR_3, 16},
     {ADDR_FLASH_SECTOR_4, 64},  {ADDR_FLASH_SECTOR_5, 128},
     {ADDR_FLASH_SECTOR_6, 128},  {ADDR_FLASH_SECTOR_7, 128},
@@ -296,6 +296,7 @@ int hal_flash_erase(uint32_t addr, int32_t len)
 int HAL_FLASH_Program(uint32_t TypeProgram, uint32_t FlashAddress, uint32_t DataAddress)
 {
     mem_flash[FlashAddress] = DataAddress;
+    return 0;
 }
 
 int hal_flash_write(const void* buf, int32_t len, uint32_t* location)

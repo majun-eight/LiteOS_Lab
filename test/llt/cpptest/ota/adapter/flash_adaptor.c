@@ -45,6 +45,8 @@
 #define FLASH_BLOCK_SIZE 0x1000
 #define FLASH_BLOCK_MASK 0xfff
 
+extern int storage_partition_init(storage_partition *part, int32_t max_num);
+
 static storage_partition s_storage_part[] = {
   {INNER_FLASH, "loader", 0x08000000, 0x00020000},
   {INNER_FLASH, "app", OTA_DEFAULT_IMAGE_ADDR, 0x000E0000},
@@ -64,7 +66,7 @@ int flash_adaptor_write(uint32_t offset, const uint8_t *buffer, uint32_t len)
 
     if((NULL == buffer) || (0 == len) || (len > FLASH_BLOCK_SIZE))
     {
-        HAL_OTA_LOG("invalid param len %ld, offset %ld", len, offset);
+        HAL_OTA_LOG("invalid param len %u, offset %u", len, offset);
         return ERR;
     }
 
@@ -73,7 +75,7 @@ int flash_adaptor_write(uint32_t offset, const uint8_t *buffer, uint32_t len)
         ret = hal_spi_flash_erase_write(buffer, FLASH_BLOCK_SIZE, offset);
         if(ret != OK)
         {
-           HAL_OTA_LOG("hal_ota_write_flash fail offset %lu, len %u", offset, FLASH_BLOCK_SIZE);
+           HAL_OTA_LOG("hal_ota_write_flash fail offset %u, len %u", offset, FLASH_BLOCK_SIZE);
         }
         return ret;
     }
@@ -94,14 +96,14 @@ int flash_adaptor_write(uint32_t offset, const uint8_t *buffer, uint32_t len)
     ret = hal_spi_flash_read(block_buff, blk_size, offset - blk_off);
     if(ret != OK)
     {
-	HAL_OTA_LOG("hal_spi_flash_read fail offset %lu, len %lu", offset + len, FLASH_BLOCK_SIZE - len);
+	HAL_OTA_LOG("hal_spi_flash_read fail offset %u, len %u", offset + len, FLASH_BLOCK_SIZE - len);
 	goto EXIT;
     }
     (void)memcpy(block_buff + blk_off, buffer, len);
     ret = hal_spi_flash_erase_write(block_buff, blk_size, offset - blk_off);
     if(ret != OK)
     {
-      HAL_OTA_LOG("hal_ota_write_flash fail offset %lu, len %u", offset, FLASH_BLOCK_SIZE);
+      HAL_OTA_LOG("hal_ota_write_flash fail offset %u, len %u", offset, FLASH_BLOCK_SIZE);
     }
 EXIT:
     osal_free(block_buff);
@@ -125,7 +127,7 @@ int app_image_restore(uint32_t src, uint32_t dst, uint32_t data_len, uint32_t he
     if (storage_partition_read(src, cache, blk_size, off + head_len) ||
       storage_partition_write(dst, cache, blk_size, off))
       return -1;
-    
+
     off += blk_size;
     rest_len -= blk_size;
   }
@@ -195,4 +197,3 @@ void flash_adaptor_init(void)
     storage_dev_install(s_storage_dev, sizeof(s_storage_dev)/ sizeof(storage_device));
     storage_partition_init(s_storage_part, sizeof(s_storage_part)/ sizeof(storage_partition));
 }
- 

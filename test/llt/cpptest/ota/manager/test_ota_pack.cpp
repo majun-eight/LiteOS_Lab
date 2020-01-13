@@ -52,7 +52,7 @@ void TestOtaPack::test_ota_pack_observe_info_read(void)
 	uint8_t* buff = NULL;
 
     ret = ota_pack_observe_info_read(buff, sizeof(buff));
-    TEST_ASSERT(ret == 0);
+    TEST_ASSERT(ret == -1);
 }
 
 void TestOtaPack::test_ota_pack_observe_info_write(void)
@@ -61,7 +61,7 @@ void TestOtaPack::test_ota_pack_observe_info_write(void)
 	uint8_t* buff = NULL;
 
     ret = ota_pack_observe_info_write(buff, sizeof(buff));
-    TEST_ASSERT(ret == 0);
+    TEST_ASSERT(ret == -1);
 }
 
 
@@ -82,7 +82,7 @@ void TestOtaPack::test_ota_pack_man_software_write_end(void)
     TEST_ASSERT(ret == -1);
 
 	ret = ota_pack_man_software_write_end(NULL,PACK_DOWNLOAD_FAIL,256);
-    TEST_ASSERT(ret == -1);	
+    TEST_ASSERT(ret == -1);
 
 }
 
@@ -92,8 +92,7 @@ void  TestOtaPack::test_ota_pack_man_software_write(void)
 {
     int ret;
     uint8_t* buff = NULL;
-	
-    ret = ota_pack_man_software_write(NULL, 0, buff, 256);
-    TEST_ASSERT(ret == -1);	
-}
 
+    ret = ota_pack_man_software_write(NULL, 0, buff, 256);
+    TEST_ASSERT(ret == 0);
+}

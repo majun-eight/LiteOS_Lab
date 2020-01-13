@@ -47,9 +47,9 @@ static int test_storage_erase_write(const void *buf, int32_t len, uint32_t offse
 
 typedef void (*init)(void);
 static storage_device test_storage_device[] = {
-    {   
+    {
         0,
-        "storage_0",
+        (char *)"storage_0",
         1024 * 1024,
         test_storage_init,
         test_storage_read,
@@ -59,7 +59,7 @@ static storage_device test_storage_device[] = {
     },
     {
         1,
-        "storage_1",
+        (char *)"storage_1",
         1024 * 1024,
         test_storage_init,
         test_storage_read,

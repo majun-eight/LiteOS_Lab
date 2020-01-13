@@ -36,6 +36,7 @@
 #include "flash_adaptor.h"
 #include "common.h"
 #include "hal_flash.h"
+#include "crc.h"
 
 #include <string.h>
 
@@ -46,7 +47,8 @@ static int ota_flag_read(ota_flag_t *flag)
 {
   if (flag != NULL) {
     printf("SPI FLAG R\n");
-    return memcpy(flag, mem_flash, sizeof(ota_flag_t));
+    memcpy((char *)flag, mem_flash, sizeof(ota_flag_t));
+    return OK;
   }
   return ERR;
 }
@@ -55,25 +57,28 @@ static int ota_flag_write(ota_flag_t *flag)
 {
   if (flag != NULL) {
     printf("SPI FLAG W:state %d\n", flag->cur_state);
-    return memcpy(mem_flash, flag, sizeof(ota_flag_t));
+    memcpy(mem_flash, (char *)flag, sizeof(ota_flag_t));
+    return OK;
   }
   return ERR;
 }
 
-static int ota_bin_read(uint32_t offset, void *buf, int len)
+static int ota_bin_read(int offset, void *buf, int len)
 {
   if (buf != NULL) {
     printf("SPI BIN R: %08d %08d\n", offset, len);
-    return memcpy(buf, mem_flash + offset, len);
+    memcpy((char *)buf, mem_flash + offset, len);
+    return OK;
   }
   return ERR;
 }
 
-static int ota_bin_write(uint32_t offset, void *buf, int len)
+static int ota_bin_write(int offset, void *buf, int len)
 {
   if (buf != NULL) {
     printf("SPI BIN W: %08d %08d\n", offset, len);
-    return memcpy(mem_flash + offset, buf, len);
+    memcpy(mem_flash + offset, (char *)buf, len);
+    return OK;
   }
   return ERR;
 }
