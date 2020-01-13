@@ -56,6 +56,7 @@ public:
     void test_oc_mqtt_tiny_bs(void);
     void test_oc_mqtt_tiny_connect_err(void);
     void test_oc_mqtt_tiny_config_err(void);
+    void test_oc_mqtt_stub(void);
 
 protected:
     void test_start();

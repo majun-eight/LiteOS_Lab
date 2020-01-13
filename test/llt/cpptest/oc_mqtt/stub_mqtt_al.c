@@ -127,10 +127,9 @@ int mqtt_al_publish(void *handle, mqtt_al_pubpara_t *pubpara)
 {
     int ret = -1;
 
-    if ((NULL != handle) && (NULL != pubpara) &&
-        (NULL != s_mqtt_al_op_cb.ops) && (NULL != s_mqtt_al_op_cb.ops->publish))
+    if (NULL != pubpara && 0 == pubpara->msg.len)
     {
-        ret = s_mqtt_al_op_cb.ops->publish(handle, pubpara);
+        ret = 0;
     }
 
     return ret;

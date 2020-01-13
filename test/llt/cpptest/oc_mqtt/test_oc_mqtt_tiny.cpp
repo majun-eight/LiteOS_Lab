@@ -42,6 +42,8 @@
 #include "mbedtls/md.h"
 #include "test_oc_mqtt_tiny.h"
 
+#include "cpp_stub.h"
+
 /* Defines ------------------------------------------------------------------*/
 /* Typedefs -----------------------------------------------------------------*/
 /* Macros -------------------------------------------------------------------*/
@@ -55,6 +57,54 @@ extern "C"
     #include <queue.h>
     #include <oc_mqtt_al.h>
     #include <oc_mqtt_assistant.h>
+
+    /* stubs */
+
+    static queue_t* queue_create_stub(const char *name,int len,int syncmode)
+    {
+        return NULL;
+    }
+
+    static void* osal_task_create_stub(const char *name,int (*task_entry)(void *args),
+                      void *args,int stack_size,void *stack,int prior)
+    {
+        return NULL;
+    }
+
+    static cJSON *cJSON_CreateObject_stub(void)
+    {
+        return NULL;
+    }
+
+    static cJSON *cJSON_CreateObject_stub2(double num)
+    {
+        cJSON *item = NULL;
+        static int index = 0;
+
+        if (++index == 2) {
+            return NULL;
+        }
+        item = (cJSON *)malloc(sizeof(cJSON));
+        if (item != NULL) {
+            memset(item, 0, sizeof(cJSON));
+        }
+        return item;
+    }
+
+    static cJSON *cJSON_CreateString_stub(const char *string)
+    {
+        return NULL;
+    }
+
+    static cJSON *cJSON_CreateNumber_stub(double num)
+    {
+        return NULL;
+    }
+
+    static cJSON *cJSON_CreateArray_stub(void)
+    {
+        return NULL;
+    }
 }
 
 #define DEFAULT_LIFETIME            60               ///< the platform need more
@@ -101,8 +151,8 @@ static int oc_cmd_normal(demo_msg_t *demo_msg)
     }
     cJSON_Delete(cmd_json);
     //////////////DO THE RESPONSE FOR THE COMMAND/////////////////////////////
-    list.item.name = "body_para";
-    list.item.buf = "body_para";
+    list.item.name = (char *)"body_para";
+    list.item.buf = (char *)"body_para";
     list.item.type = en_key_value_type_string;
     list.next = NULL;
 
@@ -141,7 +191,7 @@ static int oc_report_normal(void)
 
     leftpower = (leftpower + 7) % 100;
 
-    lst.item.name = "batteryLevel";
+    lst.item.name = (char *)"batteryLevel";
     lst.item.buf = (char *)&leftpower;
     lst.item.len = sizeof(leftpower);
     lst.item.type = en_key_value_type_int;
@@ -149,8 +199,8 @@ static int oc_report_normal(void)
 
     report.hasmore = en_oc_mqtt_has_more_no;
     report.paralst = &lst;
-    report.serviceid = "Battery";
-    report.eventtime = "20200102T163120Z";
+    report.serviceid = (char *)"Battery";
+    report.eventtime = (char *)"20200102T163120Z";
 
     root = oc_mqtt_json_fmt_report(&report);
     if (NULL != root)
@@ -182,6 +232,7 @@ TestOcMqttTiny::TestOcMqttTiny()
     TEST_ADD(TestOcMqttTiny::test_oc_mqtt_tiny_bs);
     TEST_ADD(TestOcMqttTiny::test_oc_mqtt_tiny_connect_err);
     TEST_ADD(TestOcMqttTiny::test_oc_mqtt_tiny_config_err);
+    TEST_ADD(TestOcMqttTiny::test_oc_mqtt_stub);
 }
 
 TestOcMqttTiny::~TestOcMqttTiny()
@@ -213,10 +264,10 @@ void TestOcMqttTiny::test_hmac_generate_passwd(void)
     ret = hmac_generate_passwd(NULL, 0, NULL, 0, NULL, 0);
     TEST_ASSERT(ret == MBEDTLS_ERR_MD_BAD_INPUT_DATA);
 
-    ret = hmac_generate_passwd("content", strlen("content"), "key", strlen("key"), buf, 10);
+    ret = hmac_generate_passwd((char *)"content", strlen("content"), (char *)"key", strlen("key"), buf, 10);
     TEST_ASSERT(ret == MBEDTLS_ERR_MD_BAD_INPUT_DATA);
 
-    ret = hmac_generate_passwd("content", strlen("content"), "key", strlen("key"), buf, sizeof(buf));
+    ret = hmac_generate_passwd((char *)"content", strlen("content"), (char *)"key", strlen("key"), buf, sizeof(buf));
     TEST_ASSERT(ret == 0);
 }
 
@@ -232,10 +283,10 @@ void TestOcMqttTiny::test_oc_mqtt_tiny(void)
     config.msg_deal = app_msg_deal;
     config.msg_deal_arg = NULL;
     config.lifetime = DEFAULT_LIFETIME;
-    config.server_addr = DEFAULT_SERVER_IPV4;
-    config.server_port = DEFAULT_SERVER_PORT;
-    config.id = CN_MQTT_EP_NOTEID;
-    config.pwd= CN_MQTT_EP_PASSWD;
+    config.server_addr = (char *)DEFAULT_SERVER_IPV4;
+    config.server_port = (char *)DEFAULT_SERVER_PORT;
+    config.id = (char *)CN_MQTT_EP_NOTEID;
+    config.pwd= (char *)CN_MQTT_EP_PASSWD;
     config.sec_type = en_mqtt_al_security_cas;
 
     ret = oc_mqtt_config(&config);
@@ -298,19 +349,19 @@ void TestOcMqttTiny::test_oc_mqtt_tiny_bs(void)
     config.msg_deal = app_msg_deal;
     config.msg_deal_arg = NULL;
     config.lifetime = DEFAULT_LIFETIME;
-    config.server_addr = DEFAULT_SERVER_IPV4;
-    config.server_port = DEFAULT_SERVER_PORT;
-    config.id = CN_MQTT_EP_NOTEID;
-    config.pwd= CN_MQTT_EP_PASSWD;
+    config.server_addr = (char *)DEFAULT_SERVER_IPV4;
+    config.server_port = (char *)DEFAULT_SERVER_PORT;
+    config.id = (char *)CN_MQTT_EP_NOTEID;
+    config.pwd= (char *)CN_MQTT_EP_PASSWD;
     config.sec_type = en_mqtt_al_security_none;
 
     ret = oc_mqtt_config(&config);
     TEST_ASSERT(ret == en_oc_mqtt_err_ok);
 
     mqtt_al_msgrcv_t msg = {0};
-    msg.topic.data = "hello";
+    msg.topic.data = (char *)"hello";
     msg.topic.len = strlen(msg.topic.data) + 1;
-    msg.msg.data = "{\"address\": \"10.0.0.1:8883\",\"dnsFlag\": 1}";
+    msg.msg.data = (char *)"{\"address\": \"10.0.0.1:8883\",\"dnsFlag\": 1}";
     msg.msg.len = strlen(msg.msg.data) + 1;
     msg.qos = en_mqtt_al_qos_0;
     msg.dup = 0;
@@ -338,10 +389,10 @@ void TestOcMqttTiny::test_oc_mqtt_tiny_connect_err(void)
     config.msg_deal = app_msg_deal;
     config.msg_deal_arg = NULL;
     config.lifetime = DEFAULT_LIFETIME;
-    config.server_addr = DEFAULT_SERVER_IPV4;
-    config.server_port = DEFAULT_SERVER_PORT;
-    config.id = CN_MQTT_EP_NOTEID;
-    config.pwd= CN_MQTT_EP_PASSWD;
+    config.server_addr = (char *)DEFAULT_SERVER_IPV4;
+    config.server_port = (char *)DEFAULT_SERVER_PORT;
+    config.id = (char *)CN_MQTT_EP_NOTEID;
+    config.pwd= (char *)CN_MQTT_EP_PASSWD;
     config.sec_type = en_mqtt_al_security_cas;
 
     for (int i = 2; i < 7; i++)
@@ -369,10 +420,10 @@ void TestOcMqttTiny::test_oc_mqtt_tiny_config_err(void)
     config.msg_deal = app_msg_deal;
     config.msg_deal_arg = NULL;
     config.lifetime = DEFAULT_LIFETIME;
-    config.server_addr = DEFAULT_SERVER_IPV4;
-    config.server_port = DEFAULT_SERVER_PORT;
-    config.id = CN_MQTT_EP_NOTEID;
-    config.pwd= CN_MQTT_EP_PASSWD;
+    config.server_addr = (char *)DEFAULT_SERVER_IPV4;
+    config.server_port = (char *)DEFAULT_SERVER_PORT;
+    config.id = (char *)CN_MQTT_EP_NOTEID;
+    config.pwd= (char *)CN_MQTT_EP_PASSWD;
     config.sec_type = en_mqtt_al_security_cas;
 
     config.boot_mode = en_oc_mqtt_mode_last;
@@ -383,7 +434,7 @@ void TestOcMqttTiny::test_oc_mqtt_tiny_config_err(void)
     config.id = NULL;
     ret = oc_mqtt_config(&config);
     TEST_ASSERT(ret == en_oc_mqtt_err_parafmt);
-    config.id = CN_MQTT_EP_NOTEID;
+    config.id = (char *)CN_MQTT_EP_NOTEID;
 
     config.sec_type = en_mqtt_al_security_end;
     ret = oc_mqtt_config(&config);
@@ -394,6 +445,68 @@ void TestOcMqttTiny::test_oc_mqtt_tiny_config_err(void)
     TEST_ASSERT(ret == en_oc_mqtt_err_noconfigured);
 
     oc_mqtt_tiny_uninstall();
+}
+
+void TestOcMqttTiny::test_oc_mqtt_stub(void)
+{
+    Stub sb;
+
+    // osal_task_create failed
+    sb.set(osal_task_create, osal_task_create_stub);
+    TEST_ASSERT_EQUALS(-1, oc_mqtt_tiny_install());
+    sb.reset(osal_task_create);
+
+    // queue_create failed
+    sb.set(queue_create, queue_create_stub);
+    TEST_ASSERT_EQUALS(-1, oc_mqtt_tiny_install());
+    sb.reset(queue_delete);
+
+// oc_mqtt_json_fmt_response failed
+    tag_oc_mqtt_response response = {0, };
+    // cJSON_CreateObject failed
+    sb.set(cJSON_CreateObject, cJSON_CreateObject_stub);
+    TEST_ASSERT(NULL == oc_mqtt_json_fmt_response(&response));
+    sb.reset(cJSON_CreateObject);
+
+    sb.set(cJSON_CreateObject, cJSON_CreateObject_stub2);
+    TEST_ASSERT(NULL == oc_mqtt_json_fmt_response(&response));
+    sb.reset(cJSON_CreateObject);
+
+    // cJSON_CreateString failed
+    sb.set(cJSON_CreateString, cJSON_CreateString_stub);
+    TEST_ASSERT(NULL == oc_mqtt_json_fmt_response(&response));
+    sb.reset(cJSON_CreateString);
+
+    // // cJSON_CreateNumber failed
+    sb.set(cJSON_CreateNumber, cJSON_CreateNumber_stub);
+    TEST_ASSERT(NULL == oc_mqtt_json_fmt_response(&response));
+    sb.reset(cJSON_CreateNumber);
+
+// oc_mqtt_json_fmt_report failed
+    tag_oc_mqtt_report report = {0, };
+    // cJSON_CreateObject failed
+    sb.set(cJSON_CreateObject, cJSON_CreateObject_stub);
+    TEST_ASSERT(NULL == oc_mqtt_json_fmt_report(&report));
+    sb.reset(cJSON_CreateObject);
+
+    sb.set(cJSON_CreateObject, cJSON_CreateObject_stub2);
+    TEST_ASSERT(NULL == oc_mqtt_json_fmt_report(&report));
+    sb.reset(cJSON_CreateObject);
+
+    // cJSON_CreateString failed
+    sb.set(cJSON_CreateString, cJSON_CreateString_stub);
+    TEST_ASSERT(NULL == oc_mqtt_json_fmt_report(&report));
+    sb.reset(cJSON_CreateString);
+
+    // cJSON_CreateNumber failed
+    sb.set(cJSON_CreateNumber, cJSON_CreateNumber_stub);
+    TEST_ASSERT(NULL == oc_mqtt_json_fmt_report(&report));
+    sb.reset(cJSON_CreateNumber);
+
+    // cJSON_CreateArray failed
+    sb.set(cJSON_CreateArray, cJSON_CreateArray_stub);
+    TEST_ASSERT(NULL == oc_mqtt_json_fmt_report(&report));
+    sb.reset(cJSON_CreateArray);
 }
 
 /* Private functions --------------------------------------------------------*/

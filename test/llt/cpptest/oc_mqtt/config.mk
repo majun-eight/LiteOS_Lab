@@ -15,7 +15,4 @@ CONFIG_DTLS_TYPE        := "mbedtls_cert"
 CONFIG_OC_MQTT_ENABLE   := y
 CONFIG_OC_MQTT_TYPE     := "soft"
 
-CONFIG_OC_LWM2M_ENABLE  := n
-CONFIG_OC_LWM2M_TYPE    := "soft"
-
 include $(TOP_DIR)/iot_link/iot.mk
