@@ -1,5 +1,7 @@
 #include "test_coap_al.h"
+#include "cpp_stub.h"
 
+#include <cstring>
 
 extern "C"
 {
@@ -23,6 +25,21 @@ extern "C"
     extern int coap_al_recv(coap_al_rcvpara_t *rcvparam);
     extern int coap_al_install(coap_al_op_t *op);
     extern int coap_al_uninstall();
+
+    extern void *litecoap_new_resource_stub(char *ipaddr, unsigned short port, void *ssl)
+    {
+        return NULL;
+    }
+
+    extern coap_context_t *litecoap_malloc_context_stub(void *res)
+    {
+        return NULL;
+    }
+
+    extern int litecoap_register_handler_stub(coap_context_t *ctx, msghandler func)
+    {
+        return -1;
+    }
 }
 
 extern void my_cmd_fun(void *msg, int len);
@@ -82,6 +99,27 @@ void TestCoapAL::test_coap_al_init(void)
     initpara.psk = (const unsigned char*)("010203040506");
     initpara.psklen = 12;
     initpara.pskid = (const unsigned char*)("1");
+
+    // stub test
+    Stub sb;
+    sb.set(litecoap_new_resource, litecoap_new_resource_stub);
+
+    TEST_ASSERT(0 != coap_al_init(&initpara));
+
+    sb.reset(litecoap_new_resource);
+
+    sb.set(litecoap_malloc_context, litecoap_malloc_context_stub);
+
+    TEST_ASSERT(0 != coap_al_init(&initpara));
+
+    sb.reset(litecoap_malloc_context);
+
+    sb.set(litecoap_register_handler, litecoap_register_handler_stub);
+
+    TEST_ASSERT(0 != coap_al_init(&initpara));
+
+    sb.reset(litecoap_register_handler);
+
     TEST_ASSERT(0 == coap_al_init(&initpara));
 }
 

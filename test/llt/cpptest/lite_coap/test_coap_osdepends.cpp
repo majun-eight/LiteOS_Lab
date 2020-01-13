@@ -45,7 +45,14 @@ void TestCoapOsDepends::test_litecoap_malloc_context(void)
     TEST_ASSERT(NULL == litecoap_malloc_context(NULL));
     TEST_ASSERT(tmp = litecoap_malloc_context(res));
     litecoap_free_context(NULL); //for litecoap_free_context
+
+    send_queue_t *sndque = (send_queue_t *)osal_malloc(sizeof(send_queue_t));
+    TEST_ASSERT(NULL != sndque);
+    tmp->sndque = sndque;
+
     litecoap_free_context(tmp);
+
+    // stub test
 
 }
 
