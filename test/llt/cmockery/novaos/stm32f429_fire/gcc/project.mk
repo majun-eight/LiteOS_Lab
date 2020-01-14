@@ -2,7 +2,9 @@ HOME_DIR = $(abspath $(PROJECTBASE)/..)
 
 USER_SRC = \
             ${wildcard $(HOME_DIR)/src/*.c} \
-            ${wildcard $(HOME_DIR)/../case/src/*.c}
+            ${wildcard $(HOME_DIR)/../case/src/*.c} \
+            ${wildcard $(HOME_DIR)/../case/src/fs/*.c} \
+            ${wildcard $(HOME_DIR)/../case/src/hal/*.c}
 C_SOURCES += $(USER_SRC)
 
 USER_INC = -I $(HOME_DIR)/inc  \

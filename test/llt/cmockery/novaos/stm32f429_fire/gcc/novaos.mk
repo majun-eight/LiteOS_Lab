@@ -23,6 +23,7 @@ C_SOURCES += \
             $(NOVA_ROOT)/components/cmder/src/cmder_mem.c  \
             $(NOVA_ROOT)/components/cmder/src/cmder_uart.c  \
             $(NOVA_ROOT)/components/kprintf/src/kprintf.c  \
+            ${wildcard $(NOVA_ROOT)/components/fs/src/*.c} \
             $(NOVA_ROOT)/core/hal/src/hal_int.c  \
             $(NOVA_ROOT)/core/hal/src/hal_timer.c  \
             $(NOVA_ROOT)/core/hal/src/hal_uart.c  \
@@ -41,6 +42,7 @@ novaos_inc = \
              -I $(NOVA_ROOT)/arch/aarch-m/h/cmsis \
              -I $(NOVA_ROOT)/components/cmder/h \
              -I $(NOVA_ROOT)/components/kprintf/h \
+             -I $(NOVA_ROOT)/components/fs/h \
              -I $(NOVA_ROOT)/core/hal/h \
              -I $(NOVA_ROOT)/core/kernel/h \
              -I $(NOVA_ROOT)/core/mem/h \
