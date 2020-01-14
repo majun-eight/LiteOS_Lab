@@ -138,6 +138,9 @@ void TestQueue::test_queue_pop(void)
     q2 = queue_create("test", 10, 1);
     TEST_ASSERT(0 == queue_push(q2, data, 10));
     TEST_ASSERT(0 == queue_pop(q2, (void**)&buf, 10));
+
+    TEST_ASSERT(0 == queue_delete(q2));
+    TEST_ASSERT(0 == queue_delete(q1));
 }
 
 void TestQueue::test_queue_delete(void)

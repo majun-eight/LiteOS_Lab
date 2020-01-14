@@ -15,9 +15,12 @@ GCOV_FLAGS = -fprofile-arcs -ftest-coverage -lgcov
 CFLAGS += $(GCOV_FLAGS)
 
 VALGRIND_FLAGS = --tool=memcheck --leak-check=full --show-reachable=yes --trace-children=yes --smc-check=all \
-                 --track-origins=yes
+                 --track-origins=yes -v
 
 C_INCLUDES += -I $(LLT_DIR)/common/include
 
 LIB_DIR += -L$(TEST_DIR)/3rd/cpptest/lib
 CPP_INCLUDES += -I$(TEST_DIR)/3rd/cpptest/include
+
+# ld libcpptest.so
+export LD_LIBRARY_PATH=/usr/local/lib:$(TEST_DIR)/3rd/cpptest/lib

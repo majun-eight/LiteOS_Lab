@@ -124,7 +124,7 @@ void TestOta::test_ota_storage_bin_write(void)
 void TestOta::test_ota_storage_flag_read(void)
 {
     int ret;
-    ota_flag_t flag;
+    ota_flag_t flag = {0, };
 
     ret = ota_storage_flag_read(NULL);
     TEST_ASSERT(-1 == ret);
@@ -137,7 +137,7 @@ void TestOta::test_ota_storage_flag_read(void)
 void TestOta::test_ota_storage_flag_write(void)
 {
     int ret;
-    ota_flag_t flag;
+    ota_flag_t flag = {0, };
     ota_storage_flag_init();
     ret = ota_storage_flag_write(NULL);
     TEST_ASSERT(-1 == ret);
@@ -146,6 +146,3 @@ void TestOta::test_ota_storage_flag_write(void)
     TEST_ASSERT(-1 != ret);
 
 }
-
-
-

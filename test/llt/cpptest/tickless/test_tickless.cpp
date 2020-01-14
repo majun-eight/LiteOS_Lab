@@ -46,19 +46,39 @@ void TestTickless::tear_down()
 
 }
 
+static int quit_flag = 0;
+
 static int idle_task(void *args)
 {
-    while (1)
+    while (!quit_flag)
     {
         osTicklessHandler();
     }
+    return 0;
+}
+
+static void *__osal_task_create(const char *name, int (*task_entry)(void *args),
+        void *args,int stack_size,void *stack,int prior)
+{
+    void *ret = NULL;
+    pthread_t pid;
+    pthread_attr_t a;
+
+    pthread_attr_init(&a);
+    pthread_attr_setdetachstate(&a, PTHREAD_CREATE_DETACHED);
+    if (pthread_create(&pid, &a, (void *(*)(void *))task_entry, args) != 0) {
+        return ret;
+    }
+
+    ret = (void *)pid;
+    return ret;
 }
 
 void TestTickless::test_demo(void)
 {
     osTicklessStart();
 
-    void *handle = osal_task_create("idle", idle_task, 0, 0x800, NULL, 1);
+    void *handle = __osal_task_create("idle", idle_task, 0, 0x800, NULL, 1);
     if (NULL == handle)
     {
         return;
@@ -70,7 +90,7 @@ void TestTickless::test_demo(void)
     g_bTickIrqFlag = 1;
     sleep(1);
 
-    osal_task_kill(handle);
+    quit_flag = 1;
 
     usleep(100000); // wait task exit
 }

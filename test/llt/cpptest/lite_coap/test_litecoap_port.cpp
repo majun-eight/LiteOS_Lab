@@ -123,6 +123,7 @@ void TestLiteCoapPort::test___add_opt(void)
     TEST_ASSERT(NULL != opts);
 
     litecoap_free(optpara);
+    litecoap_free_option((coap_option_t *)opts);
 }
 
 void TestLiteCoapPort::test___request(void)
@@ -173,7 +174,7 @@ void TestLiteCoapPort::test___request(void)
 
     litecoap_free(optpara);
     litecoap_free(reqpara);
-    litecoap_free(msg);
     litecoap_free(buf);
+    litecoap_delete_msg((coap_msg_t *)msg);
+    coap_al_deinit(initpara.ctx);
 }
-

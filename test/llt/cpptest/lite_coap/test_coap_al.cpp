@@ -145,11 +145,10 @@ void TestCoapAL::test_coap_al_add_option(void)
     TEST_ASSERT(NULL != opts);
 
     litecoap_free(optpara);
-
+    litecoap_free_option((coap_option_t *)opts);
 }
 
-
-void TestCoapAL::test_coap_al_new_request(void)
+static void __test_coap_al_new_request(unsigned char code)
 {
     unsigned char res[3]={'t'};
     unsigned char res1[3]={'d'};
@@ -158,13 +157,13 @@ void TestCoapAL::test_coap_al_new_request(void)
     coap_al_reqpara_t *reqpara = NULL;
 
     optpara = (coap_al_optpara_t *)litecoap_malloc(sizeof(coap_al_optpara_t));
-    TEST_ASSERT(NULL !=  optpara);
+    // TEST_ASSERT(NULL !=  optpara);
 
     reqpara = (coap_al_reqpara_t *)litecoap_malloc(sizeof(coap_al_reqpara_t));
-    TEST_ASSERT(NULL !=  optpara);
+    // TEST_ASSERT(NULL !=  optpara);
 
     char *buf = (char *)litecoap_malloc(256);
-    TEST_ASSERT(NULL !=  buf);
+    // TEST_ASSERT(NULL !=  buf);
     strcpy(buf, "hello");
 
     memset(optpara,0,sizeof(coap_al_optpara_t));
@@ -183,33 +182,29 @@ void TestCoapAL::test_coap_al_new_request(void)
     memset(reqpara,0,sizeof(coap_al_reqpara_t));
     reqpara->ctx = initpara.ctx;
     reqpara->msgtype = COAP_AL_MESSAGE_CON;
-    reqpara->code = COAP_AL_REQUEST_POST;
+    reqpara->code = code;
     reqpara->optlst = opts;
     reqpara->payload = (unsigned char*)buf;
     reqpara->len = strlen(buf);
 
     coap_msg_t *msg = (coap_msg_t *)coap_al_new_request(reqpara);
 
-    TEST_ASSERT(NULL != msg);
+    // TEST_ASSERT(NULL != msg);
     msg->optcnt = 2;
 
     // test method handle_cmd_request
     litecoap_handle_request((coap_context_t *)(initpara.ctx), msg);
-    litecoap_free(msg);
-
-    // test method handle_observe_request
-    reqpara->code = COAP_AL_REQUEST_GET;
-
-    msg = (coap_msg_t *)coap_al_new_request(reqpara);
-
-    TEST_ASSERT(NULL != msg);
-    msg->optcnt = 2;
-    litecoap_handle_request((coap_context_t *)(initpara.ctx), msg);
+    litecoap_delete_msg(msg);
 
     litecoap_free(optpara);
     litecoap_free(reqpara);
-    litecoap_free(msg);
     litecoap_free(buf);
+}
+
+void TestCoapAL::test_coap_al_new_request(void)
+{
+    __test_coap_al_new_request(COAP_AL_REQUEST_POST);
+    __test_coap_al_new_request(COAP_AL_REQUEST_GET);
 }
 
 void TestCoapAL::test_coap_al_send(void)
@@ -296,4 +291,3 @@ void TestCoapAL::test_coap_al_uninstall(void)
 {
     TEST_ASSERT(0 == coap_al_uninstall());
 }
-
