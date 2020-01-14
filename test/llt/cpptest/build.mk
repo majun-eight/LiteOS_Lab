@@ -28,7 +28,7 @@ CFLAGS    += -fdata-sections -ffunction-sections
 CFLAGS    += $(C_DEFS) $(C_INCLUDES) $(CPP_INCLUDES)
 CPP_FLAGS += -std=c++11 -fpermissive
 
-LIBS      += -lsdk -lcpptest -lpthread -lrt -static
+LIBS      += -lsdk -lcpptest -lpthread -lrt
 LIB_DIR   += -L$(BUILD_DIR)
 LDFLAGS   += $(LIB_DIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(BIN).map
 
