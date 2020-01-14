@@ -65,4 +65,3 @@ TestCoapOsDepends::TestCoapOsDepends()
     TEST_ADD(TestCoapOsDepends::test_litecoap_new_resource);
     TEST_ADD(TestCoapOsDepends::test_litecoap_malloc_context);
 }
-

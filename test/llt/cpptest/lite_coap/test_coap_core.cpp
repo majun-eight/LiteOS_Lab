@@ -82,6 +82,10 @@ void TestCoapCore::test_litecoap_parse_one_option(void)
     TEST_ASSERT(-2 == litecoap_parse_one_option(msg, &sumdelta, (const unsigned char **)&p, 2));
     p = buf;
     TEST_ASSERT(0 == litecoap_parse_one_option(msg, &sumdelta, (const unsigned char **)&p, 20));
+    if (msg->option) {
+        litecoap_free_option(msg->option);
+        msg->option = NULL;
+    }
     msg->option = (coap_option_t *)litecoap_malloc(sizeof(coap_option_t));
     p = buf;
     TEST_ASSERT(0 == litecoap_parse_one_option(msg, &sumdelta, (const unsigned char **)&p, 20));
@@ -116,6 +120,10 @@ void TestCoapCore::test_litecoap_parse_opts_payload(void)
     buf[11] = 0xdd;
     buf[27] = 0xff;
     TEST_ASSERT(0 == litecoap_parse_opts_payload(msg, buf, 30));
+    if (msg->payload) {
+        litecoap_free(msg->payload);
+        msg->payload = NULL;
+    }
     buf[27] = 0xff;
     TEST_ASSERT(0 == litecoap_parse_opts_payload(msg, buf, 28));
 
@@ -166,6 +174,7 @@ void TestCoapCore::test_litecoap_build_byte_stream(void)
     //   offset  len1   len2   len3    len4    msg->payloadlen
     //      5      2     18     320      0       10
     TEST_ASSERT(355 == litecoap_build_byte_stream(ctx, msg));
+
 
     litecoap_delete_msg(msg);
     litecoap_free_context(ctx);
@@ -319,6 +328,7 @@ void TestCoapCore::test_litecoap_send_back(void)
     TEST_ASSERT(0 == litecoap_send_ack(ctx, msg));
 
     litecoap_delete_msg(msg);
+    litecoap_free(ctx->netops);
     litecoap_free_context(ctx);
 }
 
@@ -382,7 +392,10 @@ void TestCoapCore::test_litecoap_addto_sndqueue(void)
     TEST_ASSERT(-1 == litecoap_remove_sndqueue(NULL, msg));
     TEST_ASSERT(-1 == litecoap_remove_sndqueue(ctx, NULL));
     TEST_ASSERT(0 == litecoap_remove_sndqueue(ctx, msg2));
+    litecoap_free(msg);
     TEST_ASSERT(0 == litecoap_remove_sndqueue(ctx, msg));
+    litecoap_free(msg2);
+
 
     litecoap_free_context(ctx);
 }
@@ -395,6 +408,7 @@ void TestCoapCore::test_litecoap_add_resource(void)
     TEST_ASSERT(-1 == litecoap_add_resource(NULL, res));
     TEST_ASSERT(0 == litecoap_add_resource(ctx, res));
 
+    litecoap_free(res);
     litecoap_free_context(ctx);
 }
 
@@ -468,6 +482,7 @@ void TestCoapCore::test_litecoap_handle_request(void)
     coap_res_path_t * path2 = (coap_res_path_t *)litecoap_malloc(sizeof(coap_res_path_t));
     path2->elems[0] = (char *)litecoap_malloc(5);
     memset(path2->elems[0], 0x11, 5);
+    path2->elems[0][4] = 0;
     path2->elems[1] = (char *)litecoap_malloc(5);
     memset(path2->elems[1], 0x11, 4);
     path2->elems[1][4] = 0;
@@ -493,16 +508,19 @@ void TestCoapCore::test_litecoap_handle_request(void)
     memcpy((void *)ctx->res[1].path, path3, sizeof(coap_res_path_t));
     TEST_ASSERT(0 == litecoap_handle_request(ctx, msg));
 
-    litecoap_free(path);
     litecoap_free(path->elems[0]);
     litecoap_free(path->elems[1]);
-    litecoap_free(path2);
+    litecoap_free(path);
     litecoap_free(path2->elems[0]);
     litecoap_free(path2->elems[1]);
-    litecoap_free(path3);
+    litecoap_free(path2);
     litecoap_free(path3->elems[0]);
     litecoap_free(path3->elems[1]);
+    litecoap_free(path3);
     litecoap_delete_msg(msg);
+    litecoap_free((coap_res_path_t *)ctx->res[1].path);
+    litecoap_free(ctx->res);
+    litecoap_free(ctx->netops);
     litecoap_free_context(ctx);
 }
 
@@ -527,6 +545,10 @@ void TestCoapCore::test_litecoap_handle_msg(void)
     TEST_ASSERT(0 == litecoap_handle_msg(ctx, msg));
 
     litecoap_delete_msg(msg);
+    if (ctx->res) {
+        litecoap_free(ctx->res);
+        ctx->res = NULL;
+    }
     litecoap_free_context(ctx);
 }
 
@@ -544,6 +566,7 @@ void TestCoapCore::test_litecoap_read(void)
     ctx->udpio = litecoap_malloc(100);
     TEST_ASSERT(-16 == litecoap_read(ctx));
 
+    litecoap_free(ctx->netops);
     litecoap_free_context(ctx);
 }
 
@@ -559,7 +582,7 @@ void TestCoapCore::test_litecoap_send(void)
     ctx->netops->network_send = litecoap_sal_send;
     TEST_ASSERT(-1 == litecoap_send(ctx, msg));
 
-
+    litecoap_free(ctx->netops);
     litecoap_free_context(ctx);
 }
 
@@ -590,4 +613,3 @@ TestCoapCore::TestCoapCore()
     TEST_ADD(TestCoapCore::test_litecoap_read);
     TEST_ADD(TestCoapCore::test_litecoap_send);
 }
-
