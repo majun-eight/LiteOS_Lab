@@ -28,7 +28,8 @@ CFLAGS    += -fdata-sections -ffunction-sections
 CFLAGS    += $(C_DEFS) $(C_INCLUDES) $(CPP_INCLUDES)
 CPP_FLAGS += -std=c++11 -fpermissive
 
-LIBS      += -lsdk -lcpptest -lpthread -lrt
+# LIBS      += -lsdk -lcpptest -lpthread -lrt
+LIBS      += -lcpptest -lpthread -lrt
 LIB_DIR   += -L$(BUILD_DIR)
 LDFLAGS   += $(LIB_DIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(BIN).map
 
@@ -41,11 +42,14 @@ vpath %.c $(sort $(dir $(C_SOURCES)))
 CPP_OBJECTS := $(addprefix $(BUILD_DIR)/, $(notdir $(patsubst %.cpp, %.o, $(CPP_SOURCES))))
 vpath %.cpp $(sort $(dir $(CPP_SOURCES)))
 
+OBJECTS := $(CPP_OBJECTS) $(C_OBJECTS)
+
 # start
-all:$(BUILD_DIR) $(LIB) $(BIN)
+# all:$(BUILD_DIR) $(LIB) $(BIN)
+all:$(BUILD_DIR) $(BIN)
 	@echo "OK"
 
-$(BIN):$(CPP_OBJECTS)
+$(BIN):$(OBJECTS)
 	@$(CPP) $(CFLAGS) $(CPP_FLAGS) -o $@ $^ $(LDFLAGS)
 
 $(CPP_OBJECTS):$(BUILD_DIR)/%.o:%.cpp

@@ -8,7 +8,7 @@ LLT_DIR   := $(TEST_DIR)/llt/cpptest
 # config
 ######################################
 # match files that display the coverage rate
-FILE_PATTERN = "*at*.c"
+FILE_PATTERN = "*at.c"
 
 # common config
 include $(LLT_DIR)/config.mk

@@ -11,6 +11,11 @@ extern int at_oobregister(const char *name,const void *index,size_t len,fn_at_oo
 extern int at_streammode_set(int mode);
 extern struct shell_item_t __oshell_shell_at;
 extern struct shell_item_t __oshell_shell_atdebug;
+
+    bool_t uart_at_init(int baud)
+    {
+        return true;
+    }
 }
 
 using namespace std;

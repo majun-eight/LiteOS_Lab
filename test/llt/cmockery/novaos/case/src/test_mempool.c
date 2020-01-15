@@ -152,6 +152,8 @@ void test_mempool_demo (void **state)
     sem_wait (&sem);
     sem_wait (&sem);
 
+    task_delay (5);
+
     for (i = 0; i < TEST_ARRAY_SIZE; i++)
         {
         if (test_array [i] != NULL)
@@ -164,6 +166,8 @@ void test_mempool_demo (void **state)
     assert_int_equal (0, mempool_destroy (test_pool));
 
     sem_destroy (&sem);
+
+    task_delay (5);
     }
 
 /** test entry */

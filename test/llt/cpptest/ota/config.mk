@@ -10,6 +10,9 @@ CONFIG_ARCH_CPU_TYPE   := "x86-64"
 CONFIG_DTLS_ENABLE     := y
 CONFIG_DTLS_TYPE       := "mbedtls_cert"
 
+CONFIG_TCPIP_ENABLE    := y
+CONFIG_TCPIP_TYPE      := "linux_socket"
+
 CONFIG_OTA_ENABLE      := y
 CONFIG_PCP_ENABLE      := y
 

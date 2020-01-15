@@ -22,6 +22,7 @@
 
 #include "kprintf.h"
 #include "xprintf.h"
+#include "task.h"
 
 /** test timer interfaces */
 
@@ -54,6 +55,16 @@ static int sprintf (unsigned char *string, char *format,...)
         }    
     return nbytes;
     }
+
+static void setup (void)
+{
+    task_delay (5);
+}
+
+static void teardown (void)
+{
+    task_delay (5);
+}
 
 void test_sprintf(void **state)
     {
@@ -298,5 +309,4 @@ void test_kprintf (struct tester_case * caser)
     caser->stats->fails = run_tests (tests);
     }
 
-TESTER_CASE_DEF ("test_kprintf", test_kprintf, NULL, NULL, 0);
-
+TESTER_CASE_DEF ("test_kprintf", test_kprintf, setup, teardown, 0);
