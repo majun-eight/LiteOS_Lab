@@ -23,6 +23,7 @@
 #include "kprintf.h"
 #include "task.h"
 
+static volatile int task_counter = 0;
 
 static int task_tls (uintptr_t magic)
     {
@@ -42,6 +43,7 @@ static int task_tls (uintptr_t magic)
 
         task_delay (1);
         }
+    task_counter++;
     return 0;
     }
 
@@ -51,7 +53,10 @@ void test_task_tls_demo (void **state)
     task_spawn ("tls1", 30, 0, 0x400, task_tls, 0x22222222);
     task_spawn ("tls2", 20, 0, 0x400, task_tls, 0x33333333);
 
-    task_delay (10);
+    while (task_counter < 3)
+        {
+        task_delay (10);
+        }
     }
 
 /** test entry */

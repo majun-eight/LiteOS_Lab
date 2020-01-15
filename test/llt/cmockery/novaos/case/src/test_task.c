@@ -234,7 +234,7 @@ void test_task_suspend (void **state)
     assert_int_equal (-1, task_suspend (NULL));
     assert_int_equal (errno, ERRNO_TASK_ILLEGAL_TCB);
     assert_int_equal (-1, task_suspend (&t));
-    assert_int_equal (errno, ERRNO_OBJ_ILLEGAL_MAGIC);
+    assert_int_equal (errno, ERRNO_TASK_ILLEGAL_OPERATION);
 
     assert_true (t_id = task_spawn ("test", 4, 0, 0, task_4, 0));
     task_delay (10);
